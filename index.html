@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testování MojeAplikace</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Odkaz na externí CSS soubor -->
+</head>
+<body>
+    <h1>Vítejte</h1>
+    <form id="myForm" action="index.php" method="get">
+        <label for="firstname">Jméno: </label>
+        <input type="text" id="firstname" name="firstname" required pattern="[A-Za-z\s]+" title="Jméno může obsahovat pouze písmena a mezery."><br>
+
+        <label for="city">Město: </label>
+        <input type="text" id="city" name="city" required pattern="[A-Za-z\s]+" minlength="2" title="Město může obsahovat pouze písmena a mezery a musí mít alespoň 2 znaky."><br>
+
+        <input type="submit" value="Odeslat">
+    </form>
+
+    <p id="result"></p> 
+
+    <script>
+        // Selekce formuláře a výsledného odstavce
+        const form = document.getElementById('myForm');
+        const resultParagraph = document.getElementById('result');
+
+        // Přidání event listeneru pro submit formuláře
+        form.addEventListener('submit', (event) => {
+            // Zabráníme výchozímu odeslání formuláře
+            event.preventDefault();
+
+            // Získání hodnot z formuláře
+            const firstName = form.firstname.value.trim();
+            const city = form.city.value.trim();
+
+            // Funkce pro spočítání samohlásek a souhlásek
+            function countVowelsAndConsonants(str) {
+                const vowels = 'aeiouAEIOU';
+                let vowelCount = 0;
+                let consonantCount = 0;
+
+                // Projdeme každý znak a zjistíme, zda je písmeno
+                for (let i = 0; i < str.length; i++) {
+                    const char = str[i].toLowerCase();
+
+                    // Pokud je znak písmeno
+                    if (/[a-z]/.test(char)) {
+                        if (vowels.includes(str[i])) {
+                            vowelCount++;
+                        } else {
+                            consonantCount++;
+                        }
+                    }
+                }
+
+                return { vowelCount, consonantCount };
+            }
+
+            // Podmínka pro prázdná pole
+            if (firstName === '' || city === '') {
+                resultParagraph.textContent = 'Prosím, vyplňte všechna pole.';
+                return;
+            }
+
+            // Podmínka pro minimální počet znaků v městě (alespoň 2 znaky)
+            if (city.length < 2) {
+                resultParagraph.textContent = 'Město musí mít alespoň 2 znaky.';
+                return;
+            }
+
+            // Spočítáme samohlásky a souhlásky pro jméno a město
+            const firstNameCounts = countVowelsAndConsonants(firstName);
+            const cityCounts = countVowelsAndConsonants(city);
+
+            // Sestavíme výslednou větu
+            const result = `Vítejte ${firstName} z ${city}. Vaše jméno obsahuje ${firstNameCounts.vowelCount} samohlásek a ${firstNameCounts.consonantCount} souhlásek. Vaše město obsahuje ${cityCounts.vowelCount} samohlásek a ${cityCounts.consonantCount} souhlásek.`;
+
+            // Zobrazení výsledku
+            resultParagraph.textContent = result;
+        });
+    </script>
+</body>
+</html>
